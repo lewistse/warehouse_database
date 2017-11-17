@@ -1,0 +1,41 @@
+{
+  "orders" : {
+    "-Kz6oHPx_BBuqgDQd84z" : {
+      "author" : "user1",
+      "orderNumber" : "rt6733679",
+      "uid" : "eJBsx4o3FQeRu02LsvNMzykepc53"
+    },
+    "-Kz6zwz8Yk52jh2g-1Kn" : {
+      "carPlateNumber" : "Car plate number",
+      "driverHkid" : "HKID number",
+      "driverName" : "driver Name",
+      "fulfilled" : false,
+      "orderNumber" : "test1",
+      "uid" : "eJBsx4o3FQeRu02LsvNMzykepc53"
+    },
+    "-Kz7-QOZXIZ9AFMFcAaI" : {
+      "carPlateNumber" : "Car plate number",
+      "driverHkid" : "HKID number",
+      "driverName" : "driver Name",
+      "fulfilled" : false,
+      "orderNumber" : "test2",
+      "uid" : "eJBsx4o3FQeRu02LsvNMzykepc53",
+      "userName" : "user1"
+    },
+    "-Kz75HxBWQLEtK2FqUJh" : {
+      "carPlateNumber" : "Car plate number",
+      "driverHkid" : "HKID number",
+      "driverName" : "driver Name",
+      "fulfilled" : false,
+      "orderNumber" : "3456789",
+      "uid" : "eJBsx4o3FQeRu02LsvNMzykepc53",
+      "userName" : "user1"
+    }
+  },
+  "users" : {
+    "eJBsx4o3FQeRu02LsvNMzykepc53" : {
+      "email" : "user1@warehouse1.com",
+      "username" : "user1"
+    }
+  }
+}

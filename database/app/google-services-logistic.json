@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "759809057836",
+    "firebase_url": "https://mylogisticapp.firebaseio.com",
+    "project_id": "mylogisticapp",
+    "storage_bucket": "mylogisticapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:759809057836:android:08bae5f4c76b9687",
+        "android_client_info": {
+          "package_name": "com.google.firebase.mylogisticapp.database"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "759809057836-kfk3snu3hge84nqpif7g42998evauvlp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAXqMlqNAd1G_ByAJ_-RTjnBBRBV9a1yMs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
