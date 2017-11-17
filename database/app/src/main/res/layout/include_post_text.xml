@@ -6,20 +6,20 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/post_title"
+        android:id="@+id/order_number_title"
         style="@style/TextAppearance.AppCompat.Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ellipsize="end"
         android:maxLines="1"
         android:textStyle="bold"
-        tools:text="My First Post" />
-
-    <TextView
-        android:id="@+id/post_body"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        tools:text="@string/lorem" />
+        tools:text="Order Number" />
+        <!--tools:text="Order Number"-->
+    <!--<TextView-->
+        <!--android:id="@+id/post_body"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginTop="5dp"-->
+        <!--tools:text="@string/lorem" />-->
 
 </LinearLayout>
