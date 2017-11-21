@@ -20,7 +20,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.quickstart.database.models.Post;
+import com.google.firebase.quickstart.database.models.NewOrder;
+//import com.google.firebase.quickstart.database.models.Post;
 import com.google.firebase.quickstart.database.models.User;
 
 import com.google.firebase.quickstart.database.helper.PhotoHelper;
@@ -49,49 +50,38 @@ public class NewOrderActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_new_post);
         setContentView(R.layout.activity_new_order);
 
         // [START initialize_database_ref]
         mDatabase = FirebaseDatabase.getInstance().getReference();
         // [END initialize_database_ref]
 
-        //mTitleField = findViewById(R.id.field_title);
         mNewOrderField = findViewById(R.id.new_order_title);
-        //mBodyField = findViewById(R.id.field_body);
         mSubmitButton = findViewById(R.id.fab_new_order);
 
         mSubmitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                submitPost();
+                submitNewOrder();
             }
         });
     }
 
-    private void submitPost() {
-        //final String title = mTitleField.getText().toString();
+    private void submitNewOrder() {
         final String orderNumber = mNewOrderField.getText().toString();
-        //final String body = mBodyField.getText().toString();
 
-        final String driverName = "driver Name";
+        final String driverName = "Driver Name";
         final String driverHkid = "HKID number";
         final String carPlateNumber = "Car plate number";
+
         final Boolean fulfilled = false;
 
 
         // Title is required
         if (TextUtils.isEmpty(orderNumber)) {
-            //mTitleField.setError(REQUIRED);
             mNewOrderField.setError(REQUIRED);
             return;
         }
-
-        /*// Body is required
-        if (TextUtils.isEmpty(body)) {
-            mBodyField.setError(REQUIRED);
-            return;
-        }*/
 
         // Disable button so there are no multi-posts
         setEditingEnabled(false);
@@ -114,9 +104,7 @@ public class NewOrderActivity extends BaseActivity {
                                     "Error: could not fetch user.",
                                     Toast.LENGTH_SHORT).show();
                         } else {
-                            // Write new post
-                            //writeNewPost(userId, user.username, title, body);
-                            writeNewPost(userId, user.username, orderNumber, driverName, driverHkid, carPlateNumber);
+                            writeNewOrder(userId, user.username, orderNumber);
                         }
 
                         // Finish this Activity, back to the stream
@@ -148,22 +136,16 @@ public class NewOrderActivity extends BaseActivity {
     }
 
     // [START write_fan_out]
-    //private void writeNewPost(String userId, String username, String title, String body) {
-    private void writeNewPost(String userId, String username, String orderNumber, String driverName, String driverHkid, String carPlateNumber) {
+    private void writeNewOrder(String userId, String username, String orderNumber) {
         // Create new post at /user-posts/$userid/$postid and at
         // /posts/$postid simultaneously
         String key = mDatabase.child("orders").push().getKey();
-        //Post post = new Post(userId, username, title, body);
 
-
-        Post order = new Post(userId, username, orderNumber, driverName, driverHkid, carPlateNumber);   //updated ../models/Post.java
+        NewOrder order = new NewOrder(userId, username, orderNumber);   //updated ../models/Post.java
         Map<String, Object> postValues = order.toMap();
 
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put("/orders/" + key, postValues);
-        //childUpdates.put("/posts/" + key, postValues);
-        //childUpdates.put("/user-posts/" + userId + "/" + key, postValues);
-
         mDatabase.updateChildren(childUpdates);
     }
     // [END write_fan_out]

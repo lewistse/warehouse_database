@@ -14,10 +14,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-/**
- * Created by Timotius on 2016-08-04.
- */
-
 public class PhotoHelper {
 
     public static final String CONTENT_URI_PREFIX = "content://";
