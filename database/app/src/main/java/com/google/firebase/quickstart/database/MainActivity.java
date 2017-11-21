@@ -52,9 +52,6 @@ public class  MainActivity extends BaseActivity {
         // Create the adapter that will return a fragment for each section
         mPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
             private final Fragment[] mFragments = new Fragment[] {
-//                    new RecentPostsFragment(),
-//                    new MyPostsFragment(),
-//                    new MyTopPostsFragment(),
                     new OrderFragment(),
                     new ImportFragment(),   //to be done
                     new ExportFragment(),   //to be done

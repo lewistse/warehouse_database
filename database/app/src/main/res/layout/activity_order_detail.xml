@@ -84,10 +84,10 @@
         android:weightSum="8">
 
             <FrameLayout
-                android:id="@+id/product_photo_container"
+                android:id="@+id/driver_photo_container"
                 style="@style/ProductPhotoContainer"
                 android:layout_width="200dp"
-                android:onClick="viewProductPhoto">
+                android:onClick="viewDriverPhoto">
 
                 <ImageView
                     android:id="@+id/driver_photo_image_view"
@@ -113,10 +113,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/fab_margin"
-        android:onClick="showProductPhotoDialog"
+        android:onClick="showDriverPhotoDialog"
         android:src="@drawable/ic_photo_camera"
         app:fabSize="normal"
-        app:layout_anchor="@id/product_photo_container"
+        app:layout_anchor="@id/driver_photo_container"
         app:layout_anchorGravity="bottom|right|end"/>
 
         </LinearLayout>

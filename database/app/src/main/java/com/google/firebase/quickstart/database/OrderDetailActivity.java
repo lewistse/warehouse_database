@@ -25,12 +25,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.quickstart.database.fragment.DriverPhotoDialogFragment;
 import com.google.firebase.quickstart.database.helper.PhotoHelper;
-import com.google.firebase.quickstart.database.models.Comment;
-import com.google.firebase.quickstart.database.models.Post;
+import com.google.firebase.quickstart.database.models.OrderDetail;
 import com.google.firebase.quickstart.database.models.User;
 
 import com.google.firebase.quickstart.database.helper.PhotoHelper;
+import com.google.firebase.quickstart.database.helper.LoadDriverPhotoAsync;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,15 +42,17 @@ public class OrderDetailActivity extends BaseActivity implements View.OnClickLis
 
     private static final String TAG = "OrderDetailActivity";
 
-    public static final String EXTRA_POST_KEY = "post_key";
+    //public static final String EXTRA_POST_KEY = "post_key";
     public static final String EXTRA_ORDER_KEY = "order_key";
 
-    private DatabaseReference mPostReference;
-    private DatabaseReference mCommentsReference;
+    //private DatabaseReference mPostReference;
+    //private DatabaseReference mCommentsReference;
+    private DatabaseReference mOrderDetailsReference;
     private ValueEventListener mPostListener;
+    private ValueEventListener mOrderListener;
     private String mPostKey;
     private String mOrderKey;
-    private CommentAdapter mAdapter;
+    //private CommentAdapter mAdapter;
 
     private TextView mAuthorView;
     private TextView mTitleView;
@@ -58,58 +61,46 @@ public class OrderDetailActivity extends BaseActivity implements View.OnClickLis
     private Button mCommentButton;
     private RecyclerView mCommentsRecycler;
 
-    private TextView mOrderView;
+    private TextView mOrderNumberView;
     private TextView mUserNameView;
-    private EditText mDriverNameView;
-    private EditText mDriverHkidView;
-    private EditText mDriverCarPlateView;
+    private EditText mDriverNameField;
+    private EditText mDriverHkidField;
+    private EditText mDriverCarPlateField;
     private Button mConfirmButton;
+    private RecyclerView mOrdersRecycler;
 
     private static final int REQUEST_CODE_TAKE_PHOTO = 0;
     private static final int REQUEST_CODE_CHOOSE_PHOTO = 1;
+    private static final String DRIVER_PHOTO_DIALOG_TAG = "DRIVER_PHOTO_DIALOG_TAG";
     private String mTempPhotoFilePath;
-    private ImageView mProductPhotoImageView;
+    private ImageView mDriverPhotoImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_post_detail);
+
         setContentView(R.layout.activity_order_detail);
 
         // Get post key from intent
-        //mPostKey = getIntent().getStringExtra(EXTRA_POST_KEY);
         mOrderKey = getIntent().getStringExtra(EXTRA_ORDER_KEY);
         if (mOrderKey == null) {
-            //throw new IllegalArgumentException("Must pass EXTRA_POST_KEY");
             throw new IllegalArgumentException("Must pass EXTRA_ORDER_KEY");
         }
 
         // Initialize Database
-        mPostReference = FirebaseDatabase.getInstance().getReference().child("orders").child(mOrderKey);
-        //mCommentsReference = FirebaseDatabase.getInstance().getReference().child("post-comments").child(mPostKey);
+        mOrderDetailsReference = FirebaseDatabase.getInstance().getReference().child("orders").child(mOrderKey);
 
         // Initialize Views
-//        mAuthorView = findViewById(R.id.post_author);
-//        mTitleView = findViewById(R.id.post_title);
-//        mBodyView = findViewById(R.id.post_body);
-//        mCommentField = findViewById(R.id.field_comment_text);
-//        mCommentButton = findViewById(R.id.button_post_comment);
-//        mCommentsRecycler = findViewById(R.id.recycler_comments);
-
-        mOrderView = findViewById(R.id.order_number_title);
+        mOrderNumberView = findViewById(R.id.order_number_title);
         mUserNameView = findViewById(R.id.user_name_title);
-        mDriverNameView = findViewById(R.id.driver_name_edit);
-        mDriverHkidView = findViewById(R.id.driver_hkid_edit);
-        mDriverCarPlateView = findViewById(R.id.car_plate_edit);
+        mDriverNameField = findViewById(R.id.driver_name_edit);
+        mDriverHkidField = findViewById(R.id.driver_hkid_edit);
+        mDriverCarPlateField = findViewById(R.id.car_plate_edit);
 
-
-        //mCommentButton = findViewById(R.id.button_post_comment);
-        //mCommentsRecycler = findViewById(R.id.recycler_comments);
         mConfirmButton = findViewById(R.id.confirm_button);
 
+        mDriverPhotoImageView = (ImageView) findViewById(R.id.driver_photo_image_view);
 
-        //mCommentButton.setOnClickListener(this);
-        //mCommentsRecycler.setLayoutManager(new LinearLayoutManager(this));
         mConfirmButton.setOnClickListener(this);
 
     }
@@ -120,21 +111,21 @@ public class OrderDetailActivity extends BaseActivity implements View.OnClickLis
 
         // Add value event listener to the post
         // [START post_value_event_listener]
-        ValueEventListener postListener = new ValueEventListener() {
+
+        ValueEventListener orderListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // Get Post object and use the values to update the UI
-                Post post = dataSnapshot.getValue(Post.class);
-                // [START_EXCLUDE]
-//                mAuthorView.setText(post.author);
-//                mTitleView.setText(post.title);
-//                mBodyView.setText(post.body);
 
-                mOrderView.setText(post.orderNumber);
-                mUserNameView.setText(post.userName);
-                mDriverNameView.setText(post.driverName);
-                mDriverHkidView.setText(post.driverHkid);
-                mDriverCarPlateView.setText(post.carPlateNumber);
+                OrderDetail orderDetail = dataSnapshot.getValue(OrderDetail.class);
+
+                // [START_EXCLUDE]
+                mOrderNumberView.setText(orderDetail.orderNumber);
+                mUserNameView.setText(orderDetail.userName);
+                mDriverNameField.setText(orderDetail.driverName);
+                mDriverHkidField.setText(orderDetail.driverHkid);
+                mDriverCarPlateField.setText(orderDetail.carPlateNumber);
+                Log.d(TAG, "mOrderNumberView" );
 
                 // [END_EXCLUDE]
             }
@@ -142,23 +133,20 @@ public class OrderDetailActivity extends BaseActivity implements View.OnClickLis
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 // Getting Post failed, log a message
-                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                Log.w(TAG, "loadOrders:onCancelled", databaseError.toException());
                 // [START_EXCLUDE]
-                Toast.makeText(OrderDetailActivity.this, "Failed to load post.",
+                Toast.makeText(OrderDetailActivity.this, "Failed to load orders.",
                         Toast.LENGTH_SHORT).show();
                 // [END_EXCLUDE]
             }
         };
-        mPostReference.addValueEventListener(postListener);
+        //mPostReference.addValueEventListener(postListener);
+        mOrderDetailsReference.addValueEventListener(orderListener);
         // [END post_value_event_listener]
 
         // Keep copy of post listener so we can remove it when app stops
-        mPostListener = postListener;
+        mOrderListener = orderListener;
 
-        // Listen for comments
-        //mAdapter = new CommentAdapter(this, mCommentsReference);
-//        mAdapter = new CommentAdapter(this, mPostReference);
-//        mCommentsRecycler.setAdapter(mAdapter);
     }
 
     @Override
@@ -166,26 +154,23 @@ public class OrderDetailActivity extends BaseActivity implements View.OnClickLis
         super.onStop();
 
         // Remove post value event listener
-        if (mPostListener != null) {
-            mPostReference.removeEventListener(mPostListener);
+        if (mOrderListener != null) {
+            mOrderDetailsReference.removeEventListener(mOrderListener);
         }
-
-        // Clean up comments listener
-//        mAdapter.cleanupListener();
     }
 
     @Override
     public void onClick(View v) {
         int i = v.getId();
-//        if (i == R.id.button_post_comment) {
+
         if (i == R.id.confirm_button) {
 
-            //postComment();
-            //sendNotifcaition();
+            confirmUpdate();
+            // Notification should be called here
         }
     }
 
-    private void postComment() {
+    private void confirmUpdate() {
         final String uid = getUid();
         FirebaseDatabase.getInstance().getReference().child("users").child(uid)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -193,17 +178,38 @@ public class OrderDetailActivity extends BaseActivity implements View.OnClickLis
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         // Get user information
                         User user = dataSnapshot.getValue(User.class);
-                        String authorName = user.username;
+                        String userName = user.username;
 
                         // Create new comment object
-                        String commentText = mCommentField.getText().toString();
-                        Comment comment = new Comment(uid, authorName, commentText);
+                        String orderNumberText = mOrderNumberView.getText().toString();
+                        String driverNameText = mDriverNameField.getText().toString();
+                        String driverHkidText = mDriverHkidField.getText().toString();
+                        String carPlateNumberText = mDriverCarPlateField.getText().toString();
+                        OrderDetail orderDetail = new OrderDetail(uid, userName, orderNumberText ,driverNameText, driverHkidText, carPlateNumberText);
 
-                        // Push the comment, it will appear in the list
-                        mCommentsReference.push().setValue(comment);
+                        Log.d(TAG,"uid: " +  uid);
+                        Log.d(TAG,"userName: " +  userName);
+                        Log.d(TAG,"orderNumberText: " +  orderNumberText);
+                        Log.d(TAG,"driverNameText: " +  driverNameText);
+                        Log.d(TAG,"driverHkidText: " +  driverHkidText);
+                        Log.d(TAG,"carPlateNumberText: " +  carPlateNumberText);
+
+                        // Push the ordes, it will appear in the list
+                        //mOrderDetailsReference.push().setValue(orderDetail);
+                        mOrderDetailsReference.setValue(orderDetail);
+
+                        Log.d(TAG,"uid: " +  uid);
+                        Log.d(TAG,"userName: " +  userName);
+                        Log.d(TAG,"mDriverNameField: " +  driverNameText);
+                        Log.d(TAG,"mDriverHkidField: " +  driverHkidText);
+                        Log.d(TAG,"mDriverCarPlateField: " +  carPlateNumberText);
 
                         // Clear the field
-                        mCommentField.setText(null);
+                        //mCommentField.setText(null);
+
+                        //mDriverNameField.setText(null);
+                        //mDriverHkidField.setText(null);
+                        //mDriverCarPlateField.setText(null);
                     }
 
                     @Override
@@ -213,167 +219,13 @@ public class OrderDetailActivity extends BaseActivity implements View.OnClickLis
                 });
     }
 
-    private static class CommentViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView userNameView;
-        public TextView orderNumberView;
-
-
-        public CommentViewHolder(View itemView) {
-            super(itemView);
-
-            userNameView = itemView.findViewById(R.id.user_name_title);
-            orderNumberView = itemView.findViewById(R.id.order_number_title);
-            Log.d(TAG, "CommentViewHolder:");
-        }
-    }
-
-    private static class CommentAdapter extends RecyclerView.Adapter<CommentViewHolder> {
-
-
-        private Context mContext;
-        private DatabaseReference mDatabaseReference;
-        private ChildEventListener mChildEventListener;
-
-        //private List<String> mCommentIds = new ArrayList<>();
-        //private List<Comment> mComments = new ArrayList<>();
-        private List<String> mPostIds = new ArrayList<>();
-        private List<Post> mPosts = new ArrayList<>();
-
-
-        public CommentAdapter(final Context context, DatabaseReference ref) {
-            mContext = context;
-            mDatabaseReference = ref;
-
-            // Create child event listener
-            // [START child_event_listener_recycler]
-            ChildEventListener childEventListener = new ChildEventListener() {
-                @Override
-                public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
-                    Log.d(TAG, "onChildAdded:" + dataSnapshot.getKey());
-
-                    // A new comment has been added, add it to the displayed list
-                    //Comment comment = dataSnapshot.getValue(Comment.class);
-                    Post post = dataSnapshot.getValue(Post.class);
-
-                    // [START_EXCLUDE]
-                    // Update RecyclerView
-                    mPostIds.add(dataSnapshot.getKey());
-                    mPosts.add(post);
-                    notifyItemInserted(mPosts.size() - 1);
-                    // [END_EXCLUDE]
-                }
-
-                @Override
-                public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName) {
-                    Log.d(TAG, "onChildChanged:" + dataSnapshot.getKey());
-
-                    // A comment has changed, use the key to determine if we are displaying this
-                    // comment and if so displayed the changed comment.
-//                    Comment newComment = dataSnapshot.getValue(Comment.class);
-//                    String commentKey = dataSnapshot.getKey();
-
-                    Post newPost = dataSnapshot.getValue(Post.class);
-                    String postKey = dataSnapshot.getKey();
-
-                    // [START_EXCLUDE]
-                    int postIndex = mPostIds.indexOf(postKey);
-                    if (postIndex > -1) {
-                        // Replace with the new data
-                        mPosts.set(postIndex, newPost);
-
-                        // Update the RecyclerView
-                        notifyItemChanged(postIndex);
-                    } else {
-                        Log.w(TAG, "onChildChanged:unknown_child:" + postKey);
-                    }
-                    // [END_EXCLUDE]
-                }
-
-                @Override
-                public void onChildRemoved(DataSnapshot dataSnapshot) {
-                    Log.d(TAG, "onChildRemoved:" + dataSnapshot.getKey());
-
-                    // A comment has changed, use the key to determine if we are displaying this
-                    // comment and if so remove it.
-                    //String commentKey = dataSnapshot.getKey();
-                    String postKey = dataSnapshot.getKey();
-
-                    // [START_EXCLUDE]
-                    int postIndex = mPostIds.indexOf(postKey);
-                    if (postIndex > -1) {
-                        // Remove data from the list
-                        mPostIds.remove(postIndex);
-                        mPosts.remove(postIndex);
-
-                        // Update the RecyclerView
-                        notifyItemRemoved(postIndex);
-                    } else {
-                        Log.w(TAG, "onChildRemoved:unknown_child:" + postKey);
-                    }
-                    // [END_EXCLUDE]
-                }
-
-                @Override
-                public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {
-                    Log.d(TAG, "onChildMoved:" + dataSnapshot.getKey());
-
-                    // A comment has changed position, use the key to determine if we are
-                    // displaying this comment and if so move it.
-//                    Comment movedComment = dataSnapshot.getValue(Comment.class);
-//                    String commentKey = dataSnapshot.getKey();
-
-                    Post movedPost = dataSnapshot.getValue(Post.class);
-                    String postKey = dataSnapshot.getKey();
-
-                    // ...
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    Log.w(TAG, "postComments:onCancelled", databaseError.toException());
-                    Toast.makeText(mContext, "Failed to load comments.",
-                            Toast.LENGTH_SHORT).show();
-                }
-            };
-            ref.addChildEventListener(childEventListener);
-            // [END child_event_listener_recycler]
-
-            // Store reference to listener so it can be removed on app stop
-            mChildEventListener = childEventListener;
-        }
-
-        @Override
-        public CommentViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            LayoutInflater inflater = LayoutInflater.from(mContext);
-            View view = inflater.inflate(R.layout.item_comment, parent, false);
-            return new CommentViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(CommentViewHolder holder, int position) {
-//            Comment comment = mComments.get(position);
-//            holder.authorView.setText(comment.author);
-//            holder.bodyView.setText(comment.text);
-
-            Post post = mPosts.get(position);
-            holder.userNameView.setText(post.userName);
-            holder.orderNumberView.setText(post.orderNumber);
-        }
-
-        @Override
-        public int getItemCount() {
-            return mPosts.size();
-        }
-
-        public void cleanupListener() {
-            if (mChildEventListener != null) {
-                mDatabaseReference.removeEventListener(mChildEventListener);
-            }
-        }
-
-    }
-
+   /**
+     * AlertDialog interface callback method which gets invoked when the user selects one of the
+     * available options on the product photo dialog.
+     * @param dialogInterface - the dialog interface.
+     * @param i - position of the selected option.
+     */
     @Override
     public void onClick(DialogInterface dialogInterface, int i) {
         if (i == 0) {
@@ -387,15 +239,22 @@ public class OrderDetailActivity extends BaseActivity implements View.OnClickLis
                 } catch (IOException e) {
                     Log.e(TAG, e.getMessage(), e);
                 }
+                Log.d(TAG, "photoFile = " + photoFile);
+
                 if (photoFile != null) {
                     // Save the photo file path globally.
                     mTempPhotoFilePath = photoFile.getAbsolutePath();
+                    Log.d(TAG, "mTempPhotoFilePath" + mTempPhotoFilePath);
+
                     // Get the file content URI using FileProvider to avoid FileUriExposedException.
                     Uri photoUri = FileProvider.getUriForFile(this, getString(R.string.authority), photoFile);
+
+                    Log.d(TAG, "photoUri = " + photoUri);
                     // Set the file content URI as an intent extra and dispatch the camera intent.
                     cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
                     startActivityForResult(cameraIntent, REQUEST_CODE_TAKE_PHOTO);
                 }
+
             }
         } else {
             // The user selects 'Choose photo' option. Dispatch the choose photo intent.
@@ -405,9 +264,11 @@ public class OrderDetailActivity extends BaseActivity implements View.OnClickLis
         }
     }
 
-    public void viewProductPhoto(View view) {
-        PhotoHelper.dispatchViewImageIntent(this, mProductPhotoImageView.getTag());
-        Log.d(TAG, "viewProductPhoto: " +"Doing Nothing");
+    public void viewDriverPhoto(View view) {
+
+        PhotoHelper.dispatchViewImageIntent(this, mDriverPhotoImageView.getTag());
+        Log.d(TAG, "viewDriverPhoto: " +" show photo");
+
     }
 
     /**
@@ -415,10 +276,39 @@ public class OrderDetailActivity extends BaseActivity implements View.OnClickLis
      * This method will inflate the product photo dialog using the product photo dialog fragment.
      * @param view - 'photo camera' floating action button.
      */
-    public void showProductPhotoDialog(View view) {
-        //ProductPhotoDialogFragment dialogFragment = new ProductPhotoDialogFragment();
-        //dialogFragment.show(getSupportFragmentManager(), PRODUCT_PHOTO_DIALOG_TAG);
-        Log.d(TAG, "showProductPhotoDialog: " +"Doing Nothing");
+    public void showDriverPhotoDialog(View view) {
+        DriverPhotoDialogFragment dialogFragment = new DriverPhotoDialogFragment();
+        dialogFragment.show(getSupportFragmentManager(), DRIVER_PHOTO_DIALOG_TAG);
+        Log.d(TAG, "showDriverPhotoDialog: " +"Doing Nothing");
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check the request code to determine which intent was dispatched.
+        if (requestCode == REQUEST_CODE_TAKE_PHOTO) {
+            if (resultCode == RESULT_OK) {
+                // Take photo successful. If the user has previously set a captured photo on the
+                // ImageView, that photo file needs to be deleted since it will be replaced now.
+                PhotoHelper.deleteCapturedPhotoFile(mDriverPhotoImageView.getTag());
+                // Save the file uri as a tag and display the captured photo on the ImageView.
+                mDriverPhotoImageView.setTag(mTempPhotoFilePath);
+                new LoadDriverPhotoAsync(this, mDriverPhotoImageView).execute(mTempPhotoFilePath);
+            } else if (resultCode == RESULT_CANCELED) {
+                // The user cancelled taking a photo. The photo file created from the camera intent
+                // is just an empty file so delete it since we don't need it anymore.
+                File photoFile = new File(mTempPhotoFilePath);
+                photoFile.delete();
+            }
+        } else if (requestCode == REQUEST_CODE_CHOOSE_PHOTO) {
+            if (resultCode == RESULT_OK && data != null) {
+                // Choose photo successful. Delete previously captured photo file if there's any.
+                PhotoHelper.deleteCapturedPhotoFile(mDriverPhotoImageView.getTag());
+                // Save the file uri as a tag and display the selected photo on the ImageView.
+                String photoPath = data.getData().toString();
+                mDriverPhotoImageView.setTag(photoPath);
+                new LoadDriverPhotoAsync(this, mDriverPhotoImageView).execute(photoPath);
+            }
+        }
     }
 }
 
