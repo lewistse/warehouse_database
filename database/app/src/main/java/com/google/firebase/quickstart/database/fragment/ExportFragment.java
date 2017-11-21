@@ -3,7 +3,7 @@ package com.google.firebase.quickstart.database.fragment;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 
-//  MyTopPostsFragment
+//  MyTopPostsFragment: To be updated
 public class ExportFragment extends OrderListFragment {
 
     public ExportFragment() {}

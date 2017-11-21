@@ -7,15 +7,12 @@
     <string name="email_label">Email</string>
     <string name="password_label">Password</string>
     <string name="send_text">Send</string>
-    <string name="lorem">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean nec condimentum ante, quis mattis mi. Proin ut rhoncus libero, ac euismod neque. Ut suscipit, enim a facilisis consequat, orci lacus venenatis orci, at ultricies orci nulla sed ex. In condimentum viverra velit, eget feugiat libero imperdiet vel. Aenean pretium, lectus vitae bibendum bibendum, diam turpis convallis eros, quis tristique leo sapien at ipsum. Praesent eu odio id nulla lobortis auctor. Donec eget dolor eget nisl euismod commodo vel a lacus. Quisque ut justo vitae urna pharetra accumsan. Etiam dignissim neque iaculis mauris viverra, blandit rhoncus odio porttitor. Phasellus nibh arcu.</string>
+    <string name="lorem">Lorem</string>
     <string name="title_sign_in">Welcome</string>
     <string name="sign_up">Sign Up</string>
     <string name="hint_password">password</string>
     <string name="hint_email">email</string>
     <string name="sign_in">Sign In</string>
-    <!--<string name="heading_recent">Recent</string>-->
-    <!--<string name="heading_my_posts">My Posts</string>-->
-    <!--<string name="heading_my_top_posts">My Top Posts</string>-->
 
     <string name="heading_recent">Order</string>
     <string name="heading_my_posts">Import</string>
@@ -27,13 +24,14 @@
     <string name="driver_hkid_title">HKID Number</string>
     <string name="car_plate_title">Car Plate Number</string>
     <string name="image_view_driver_photo">image_view_driver_photo</string>
-    <!--<string name="select_image">Select Image</string>-->
     <string name="confirm_button">Confirm</string>
     <string name="authority" translatable="false">com.google.firebase.quickstart.database</string>
 
-    <string-array name="product_photo_dialog_options">
-        <item>Take photo</item>
-        <item>Choose photo</item>
+
+    <string name="title_dialog_driver_photo">Select driver photo</string>
+    <string-array name="driver_photo_dialog_options">
+        <item>TAKE PHOTO</item>
+        <item>CHOOSE PHOTO</item>
     </string-array>
 
 </resources>

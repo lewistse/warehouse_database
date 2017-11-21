@@ -3,6 +3,7 @@ package com.google.firebase.quickstart.database.fragment;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 
+// To be updated
 public class ImportFragment extends OrderListFragment {
 //  MyPostsFragment   {
 
