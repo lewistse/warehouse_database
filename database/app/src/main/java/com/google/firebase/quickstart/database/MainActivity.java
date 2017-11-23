@@ -16,6 +16,7 @@
 
 package com.google.firebase.quickstart.database;
 
+import android.app.SearchManager;
 import android.content.Intent;
 import android.nfc.Tag;
 import android.os.Bundle;
@@ -23,15 +24,14 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+//import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.SearchView;
 
 import com.google.firebase.auth.FirebaseAuth;
-//import com.google.firebase.quickstart.database.fragment.MyPostsFragment;
-//import com.google.firebase.quickstart.database.fragment.MyTopPostsFragment;
-//import com.google.firebase.quickstart.database.fragment.RecentPostsFragment;
 
 import com.google.firebase.quickstart.database.fragment.ImportFragment;
 import com.google.firebase.quickstart.database.fragment.ExportFragment;
@@ -43,6 +43,7 @@ public class  MainActivity extends BaseActivity {
 
     private FragmentPagerAdapter mPagerAdapter;
     private ViewPager mViewPager;
+    SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,9 +58,9 @@ public class  MainActivity extends BaseActivity {
                     new ExportFragment(),   //to be done
             };
             private final String[] mFragmentNames = new String[] {
-                    getString(R.string.heading_recent),
-                    getString(R.string.heading_my_posts),
-                    getString(R.string.heading_my_top_posts)
+                    getString(R.string.heading_order),
+                    getString(R.string.heading_import),
+                    getString(R.string.heading_export)
 
             };
             @Override
@@ -81,6 +82,27 @@ public class  MainActivity extends BaseActivity {
         mViewPager.setAdapter(mPagerAdapter);
         TabLayout tabLayout = findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
+
+        //search order number
+        searchView = (SearchView) findViewById(R.id.search_bar);
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                                              @Override
+                                              public boolean onQueryTextSubmit(String query) {
+                                                  return true;
+                                              }
+
+                                              @Override
+                                              public boolean onQueryTextChange(String newText) {
+                                                  //adapter.swapCursor(dbHelper.readStock(searchView.getQuery().toString()));
+                                                  System.out.println("inside onQueryTextChange  " +newText);
+                                                  return true;
+                                              }
+                                          });
+
+        System.out.println("searchText: "+searchView.getQuery().toString());
+        //Log.d(TAG, "searchText" );
+
 
         // Button launches NewPostActivity
         findViewById(R.id.fab_new_order).setOnClickListener(new View.OnClickListener() {

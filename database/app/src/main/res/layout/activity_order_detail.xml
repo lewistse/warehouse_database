@@ -33,6 +33,19 @@
                 android:text="User Name" />
 
             <TextView
+                android:id="@+id/carrier_company_name_title"
+                style="@style/details_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Carrier Company Name" />
+
+            <EditText
+                android:id="@+id/carrier_company_name_edit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text" />
+
+            <TextView
                 android:id="@+id/driver_name_title"
                 style="@style/details_title"
                 android:layout_width="wrap_content"
@@ -54,7 +67,7 @@
 
             <EditText
                 android:id="@+id/driver_hkid_edit"
-                android:layout_width="354dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="text"
                 android:maxLength="4" />
@@ -72,11 +85,14 @@
                 android:layout_height="wrap_content"
                 android:inputType="text" />
 
-            <!--<ImageView-->
-            <!--android:id="@+id/image_view"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="200dp"-->
-            <!--android:paddingBottom="16dp"/>-->
+            <TextView
+                android:id="@+id/time_stamp_view"
+                style="@style/details_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="8dp"
+                android:text="Time Stamp" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

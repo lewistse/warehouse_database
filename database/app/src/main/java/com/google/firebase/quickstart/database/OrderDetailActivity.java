@@ -53,10 +53,12 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -66,34 +68,22 @@ public class OrderDetailActivity extends BaseActivity implements View.OnClickLis
 
     private static final String TAG = "OrderDetailActivity";
 
-
-    //public static final String EXTRA_POST_KEY = "post_key";
     public static final String EXTRA_ORDER_KEY = "order_key";
 
-    //private DatabaseReference mPostReference;
-    //private DatabaseReference mCommentsReference;
     private DatabaseReference mOrderDetailsReference;
-    private ValueEventListener mPostListener;
     private ValueEventListener mOrderListener;
-    private String mPostKey;
     private String mOrderKey;
-    //private CommentAdapter mAdapter;
 
-    private TextView mAuthorView;
-    private TextView mTitleView;
-    private TextView mBodyView;
-    private EditText mCommentField;
-    private Button mCommentButton;
-    private RecyclerView mCommentsRecycler;
 
     private TextView mOrderNumberView;
     private TextView mUserNameView;
+    private TextView mConfirmTimeStampView;
     private EditText mDriverNameField;
     private EditText mDriverHkidField;
     private EditText mDriverCarPlateField;
+    private EditText mCarrierCompanyNameField;
     private TextView mDriverPhotoUrlField;
     private Button mConfirmButton;
-    private RecyclerView mOrdersRecycler;
 
     private static final int REQUEST_CODE_TAKE_PHOTO = 0;
     private static final int REQUEST_CODE_CHOOSE_PHOTO = 1;
@@ -196,7 +186,8 @@ public class OrderDetailActivity extends BaseActivity implements View.OnClickLis
         mDriverNameField = findViewById(R.id.driver_name_edit);
         mDriverHkidField = findViewById(R.id.driver_hkid_edit);
         mDriverCarPlateField = findViewById(R.id.car_plate_edit);
-//        mDriverPhotoUrlField = findViewById(R.id.driver_photo_url_title);
+        mConfirmTimeStampView= findViewById(R.id.time_stamp_view);
+        mCarrierCompanyNameField = findViewById(R.id.carrier_company_name_edit);
 
         mConfirmButton = findViewById(R.id.confirm_button);
 
@@ -244,6 +235,9 @@ public class OrderDetailActivity extends BaseActivity implements View.OnClickLis
                 mDriverNameField.setText(orderDetail.driverName);
                 mDriverHkidField.setText(orderDetail.driverHkid);
                 mDriverCarPlateField.setText(orderDetail.carPlateNumber);
+                mConfirmTimeStampView.setText(orderDetail.confirmTimeStamp);
+                mCarrierCompanyNameField.setText(orderDetail.carrierCompanyName);
+
 //                mDriverPhotoUrlField.setText(orderDetail.driverPhotoUrl);
                 if(orderDetail.driverPhotoUrl!=null)
                     mDriverPhotoImageView.setImageBitmap(getImageBitmap(orderDetail.driverPhotoUrl));
@@ -433,11 +427,16 @@ public class OrderDetailActivity extends BaseActivity implements View.OnClickLis
     @Override
     public void onClick(View v) {
         int i = v.getId();
+
         if (i == R.id.confirm_button) {
+
             confirmUpdate();
+
             // Notification should be called here
+
         }
     }
+
 
     private void confirmUpdate() {
         final String uid = getUid();
@@ -451,13 +450,24 @@ public class OrderDetailActivity extends BaseActivity implements View.OnClickLis
                         String userName = user.username;
                         String driverPhotoUrlText=mDownloadUrl.toString();
 
+                        //Lock current time
+                        java.util.Calendar confirmtTime = java.util.Calendar.getInstance();
+                        //long timeStamp = eventDate.getTimeInMillis();
+                        Date TimeStamp = confirmtTime.getTime();
+                        Log.d(TAG, "TimeStamp: " + TimeStamp);
+                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+                        String confirmTimeStamp = format.format(TimeStamp);
+                        Log.d(TAG, "confirmTimeStamp: " + confirmTimeStamp);
+
                         // Create new comment object
                         String orderNumberText = mOrderNumberView.getText().toString();
                         String driverNameText = mDriverNameField.getText().toString();
                         String driverHkidText = mDriverHkidField.getText().toString();
                         String carPlateNumberText = mDriverCarPlateField.getText().toString();
+                        String carrierCompanyNameText = mCarrierCompanyNameField.getText().toString();
+                        OrderDetail orderDetail = new OrderDetail(uid, userName, orderNumberText ,driverNameText, driverHkidText, carPlateNumberText,confirmTimeStamp, carrierCompanyNameText,driverPhotoUrlText);
                         //String driverPhotoUrlText = mDriverPhotoUrlField.getText().toString();
-                        OrderDetail orderDetail = new OrderDetail(uid, userName, orderNumberText ,driverNameText, driverHkidText, carPlateNumberText, driverPhotoUrlText);
 
                         Log.d(TAG,"uid: " +  uid);
                         Log.d(TAG,"userName: " +  userName);
@@ -465,9 +475,11 @@ public class OrderDetailActivity extends BaseActivity implements View.OnClickLis
                         Log.d(TAG,"driverNameText: " +  driverNameText);
                         Log.d(TAG,"driverHkidText: " +  driverHkidText);
                         Log.d(TAG,"carPlateNumberText: " +  carPlateNumberText);
+                        Log.d(TAG,"confirmTimeStamp: " +  confirmTimeStamp);
+                        Log.d(TAG,"carrierCompanyName: " +  carrierCompanyNameText);
                         Log.d(TAG,"driverPhotoUrlText: " +  driverPhotoUrlText);
 
-                        // Push the orders, it will appear in the list
+                        // Push the ordes, it will appear in the list
                         //mOrderDetailsReference.push().setValue(orderDetail);
                         mOrderDetailsReference.setValue(orderDetail);
 
@@ -476,6 +488,7 @@ public class OrderDetailActivity extends BaseActivity implements View.OnClickLis
                         Log.d(TAG,"mDriverNameField: " +  driverNameText);
                         Log.d(TAG,"mDriverHkidField: " +  driverHkidText);
                         Log.d(TAG,"mDriverCarPlateField: " +  carPlateNumberText);
+                        Log.d(TAG,"confirmTimeStamp: " +  confirmTimeStamp);
                         Log.d(TAG,"mDriverPhotoUrlField: " +  driverPhotoUrlText);
 
                         // Clear the field
@@ -514,8 +527,10 @@ public class OrderDetailActivity extends BaseActivity implements View.OnClickLis
     }
 
     public void viewDriverPhoto(View view) {
+
         PhotoHelper.dispatchViewImageIntent(this, mDriverPhotoImageView.getTag());
         Log.d(TAG, "viewDriverPhoto: " +" show photo");
+
     }
 
     /**
@@ -599,3 +614,4 @@ public class OrderDetailActivity extends BaseActivity implements View.OnClickLis
         }
     }
 }
+

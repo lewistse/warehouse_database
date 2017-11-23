@@ -14,15 +14,16 @@
     <string name="hint_email">email</string>
     <string name="sign_in">Sign In</string>
 
-    <string name="heading_recent">Order</string>
-    <string name="heading_my_posts">Import</string>
-    <string name="heading_my_top_posts">Export</string>
+    <string name="heading_order">Order</string>
+    <string name="heading_import">Import</string>
+    <string name="heading_export">Export</string>
 
     <string name="order_number_title">Order Number</string>
     <string name="user_name_title">User Name</string>
     <string name="driver_name_title">Driver Name</string>
     <string name="driver_hkid_title">HKID Number</string>
-    <string name="car_plate_title">Car Plate</string>
+    <string name="car_plate_title">Car Plate Number</string>
+    <string name="carrier_company_title">Carrier Company Name</string>
     <string name="driver_photo_url_title">Driver Photo URL</string>
     <string name="image_view_driver_photo">image_view_driver_photo</string>
     <string name="confirm_button">Confirm</string>

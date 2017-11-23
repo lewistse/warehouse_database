@@ -10,12 +10,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <android.support.v7.widget.SearchView
+    <!--<android.support.v7.widget.SearchView-->
+    <SearchView
         android:id="@+id/search_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:queryHint="Search"
+        android:queryHint="Search "
         android:layout_below="@id/tabs" />
 
     <android.support.v4.view.ViewPager

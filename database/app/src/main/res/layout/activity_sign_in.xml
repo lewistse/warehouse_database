@@ -10,13 +10,23 @@
     tools:context="com.google.firebase.quickstart.database.SignInActivity">
 
 
-    <ImageView
+    <!--<ImageView-->
+        <!--android:id="@+id/icon"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:layout_marginBottom="@dimen/activity_vertical_margin"-->
+        <!--android:src="@drawable/firebase_lockup_400" />-->
+
+    <TextView
         android:id="@+id/icon"
+        style="@style/hexa_solutions_limited"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingBottom="40dp"
+        android:paddingTop="40dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
-        android:src="@drawable/firebase_lockup_400" />
+        android:text="Hexa Solutions" />
 
     <LinearLayout
         android:id="@+id/layout_email_password"

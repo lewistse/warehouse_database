@@ -15,11 +15,11 @@ public class LoadDriverPhotoAsync extends AsyncTask<String, Void, Bitmap> {
     private static final String LOG_TAG = LoadDriverPhotoAsync.class.getSimpleName();
 
     private Context mContext;
-    private ImageView mProductPhotoImageView;
+    private ImageView mDriverPhotoImageView;
 
-    public LoadDriverPhotoAsync(Context context, ImageView productPhotoImageView) {
+    public LoadDriverPhotoAsync(Context context, ImageView driverPhotoImageView) {
         mContext = context;
-        mProductPhotoImageView = productPhotoImageView;
+        mDriverPhotoImageView = driverPhotoImageView;
     }
 
     @Override
@@ -36,7 +36,7 @@ public class LoadDriverPhotoAsync extends AsyncTask<String, Void, Bitmap> {
     @Override
     protected void onPostExecute(Bitmap bitmap) {
         super.onPostExecute(bitmap);
-        if (bitmap != null) mProductPhotoImageView.setImageBitmap(bitmap);
+        if (bitmap != null) mDriverPhotoImageView.setImageBitmap(bitmap);
     }
 
 }

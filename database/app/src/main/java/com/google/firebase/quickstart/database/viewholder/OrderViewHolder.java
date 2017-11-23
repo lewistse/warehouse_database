@@ -12,12 +12,6 @@ import com.google.firebase.quickstart.database.models.NewOrder;
 
 public class OrderViewHolder extends RecyclerView.ViewHolder {
 
-    /*public TextView titleView;
-    public TextView authorView;
-    public ImageView starView;
-    public TextView numStarsView;
-    public TextView bodyView*/;
-
     public TextView orderNumberView;
     public TextView driverNameView;
     //public ImageView driverPhotoView;
@@ -36,29 +30,12 @@ public class OrderViewHolder extends RecyclerView.ViewHolder {
 
         // driverPhotoView = itemView.findViewById(R.id.driver_photo_image_view);
 
-
-
-        /*titleView = itemView.findViewById(R.id.post_title);
-        authorView = itemView.findViewById(R.id.post_author);
-        starView = itemView.findViewById(R.id.star);
-        numStarsView = itemView.findViewById(R.id.post_num_stars);
-        bodyView = itemView.findViewById(R.id.post_body);*/
     }
 
     public void bindToOrder(NewOrder newOrder) {
-//        titleView.setText(post.title);
-//        authorView.setText(post.author);
-//        numStarsView.setText(String.valueOf(post.starCount));
-//        bodyView.setText(post.body);
-//        starView.setOnClickListener(starClickListener);
 
         orderNumberView.setText(newOrder.orderNumber);
         userNameView.setText(newOrder.userName);
 
-//        driverNameView.setText(newOrder.driverName);
-//        driverHkidView.setText(newOrder.driverHkid);
-//        carPlateNumberView.setText(newOrder.carPlateNumber);
-
-        //starView.setOnClickListener(starClickListener);
     }
 }

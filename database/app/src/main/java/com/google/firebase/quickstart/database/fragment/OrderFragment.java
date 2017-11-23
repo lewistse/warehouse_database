@@ -13,10 +13,22 @@ public class OrderFragment extends OrderListFragment {
         // [START recent_posts_query]
         // Last 100 posts, these are automatically the 100 most recent
         // due to sorting by push() keys
-        Query recentPostsQuery = databaseReference.child("orders")
+        Query recentOrdersQuery = databaseReference.child("orders")
                 .limitToFirst(100);
         // [END recent_posts_query]
 
-        return recentPostsQuery;
+        return recentOrdersQuery;
     }
+
+//    @Override
+//    public Query searchQuery(DatabaseReference databaseReference) {
+//        // [START recent_posts_query]
+//        // Last 100 posts, these are automatically the 100 most recent
+//        // due to sorting by push() keys
+//        Query recentOrdersQuery = databaseReference.child("orders").startAt("" + mHashTag)
+//                .limitToFirst(100);
+//        // [END recent_posts_query]
+//
+//        return recentSearchOrdersQuery;
+//    }
 }

@@ -21,6 +21,7 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.quickstart.database.MainActivity;
 import com.google.firebase.quickstart.database.OrderDetailActivity;
 import com.google.firebase.quickstart.database.R;
 import com.google.firebase.quickstart.database.models.NewOrder;
@@ -68,8 +69,32 @@ public abstract class OrderListFragment extends Fragment {
         mManager.setStackFromEnd(true);
         mRecycler.setLayoutManager(mManager);
 
+
+
         // Set up FirebaseRecyclerAdapter with the Query
         Query ordersQuery = getQuery(mDatabase);
+
+//        Query searchRef = getQuery(mDatabase).orderByChild("Orders").startAt(newText);
+//
+//        searchRef.addValueEventListener(new ValueEventListener()
+//        {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot)
+//            {
+//                for (DataSnapshot postSnapshot : dataSnapshot.getChildren())
+//                {
+//                    //TODO get the data here
+//
+//                }
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError){
+//                Log.w(TAG, "searchOrders:onCancelled", databaseError.toException());
+//            }
+//        });
+
 
         FirebaseRecyclerOptions options = new FirebaseRecyclerOptions.Builder<NewOrder>()
                 .setQuery(ordersQuery, NewOrder.class)
