@@ -13,6 +13,7 @@ public class OrderDetail {
     public String driverName;
     public String driverHkid;
     public String carPlateNumber;
+    public String driverPhotoUrl;
 
 
     public OrderDetail() {
@@ -20,13 +21,14 @@ public class OrderDetail {
     }
 
     //public Comment(String uid, String author, String text) {
-    public OrderDetail(String uid, String userName, String orderNumber, String driverName, String driverHkid, String carPlateNumber) {
+    public OrderDetail(String uid, String userName, String orderNumber, String driverName, String driverHkid, String carPlateNumber, String driverPhotoUrl) {
         this.uid = uid;
         this.userName = userName;
         this.orderNumber = orderNumber;
         this.driverName = driverName;
         this.driverHkid = driverHkid;
         this.carPlateNumber = carPlateNumber;
+        this.driverPhotoUrl = driverPhotoUrl;
     }
 
 }
