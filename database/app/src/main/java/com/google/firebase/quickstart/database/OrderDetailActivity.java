@@ -448,7 +448,9 @@ public class OrderDetailActivity extends BaseActivity implements View.OnClickLis
                         // Get user information
                         User user = dataSnapshot.getValue(User.class);
                         String userName = user.username;
-                        String driverPhotoUrlText=mDownloadUrl.toString();
+                        String driverPhotoUrlText = null;
+                        if (mDownloadUrl!=null)
+                            driverPhotoUrlText = mDownloadUrl.toString();
 
                         //Lock current time
                         java.util.Calendar confirmtTime = java.util.Calendar.getInstance();
