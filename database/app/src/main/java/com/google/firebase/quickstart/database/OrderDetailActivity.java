@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
@@ -153,14 +154,14 @@ public class OrderDetailActivity extends BaseActivity implements View.OnClickLis
                                 "Failed to download from %s",
                                 intent.getStringExtra(MyDownloadService.EXTRA_DOWNLOAD_PATH)));
                         break;
-                    case MyUploadService.UPLOAD_COMPLETED:
-                        File photoFile = new File(mTempPhotoFilePath);
-                        photoFile.delete();
 
+                    case MyUploadService.UPLOAD_COMPLETED:
+                        if (mTempPhotoFilePath!=null)
+                            new File(mTempPhotoFilePath).delete();
+                        if (mFileUri!=null)
+                            new File(mFileUri.getPath()).delete();
                     case MyUploadService.UPLOAD_ERROR:
                         onUploadResultIntent(intent);
-
-                        Log.w("IMAGE_URL", "Path is " + mDownloadUrl.toString());
                         try{// Here I'm setting image in ImageView
                             mDriverPhotoImageView.setImageBitmap(getImageBitmap(mDownloadUrl.toString()));
                         }catch (Exception e){
@@ -554,7 +555,7 @@ public class OrderDetailActivity extends BaseActivity implements View.OnClickLis
            if (resultCode == RESULT_OK) {
                Bitmap b= BitmapFactory.decodeFile(mTempPhotoFilePath);
                Bitmap out = getResizedBitmap(b, 1024);
-               File file = new File(mTempPhotoFilePath.substring(0,mTempPhotoFilePath.lastIndexOf("/")), "Final_"+ mTempPhotoFilePath.substring(mTempPhotoFilePath.lastIndexOf("/")+1) );
+               File file = new File(mTempPhotoFilePath.substring(0,mTempPhotoFilePath.lastIndexOf("/")), "Final_"+ mTempPhotoFilePath.substring(mTempPhotoFilePath.lastIndexOf("/")+1));
                FileOutputStream fOut;
                try {
                    fOut = new FileOutputStream(file);
@@ -570,17 +571,9 @@ public class OrderDetailActivity extends BaseActivity implements View.OnClickLis
                mFileUri =Uri.fromFile(file) ;
                if (mFileUri != null) {
                    uploadFromUri(mFileUri);
-                // Take photo successful. If the user has previously set a captured photo on the
-                // ImageView, that photo file needs to be deleted since it will be replaced now.
-//                PhotoHelper.deleteCapturedPhotoFile(mDriverPhotoImageView.getTag());
-//                // Save the file uri as a tag and display the captured photo on the ImageView.
-//                mDriverPhotoImageView.setTag(mTempPhotoFilePath);
-//                   new LoadDriverPhotoAsync(this, mDriverPhotoImageView).execute(mDownloadUrl.toString());
-               } else {
-                   Log.w(TAG, "File URI is null");
-               }
+               } else {Log.w(TAG, "File URI is null");}
 
-            } else if (resultCode == RESULT_CANCELED) {
+           } else if (resultCode == RESULT_CANCELED) {
                 // The user cancelled taking a photo. The photo file created from the camera intent
                 // is just an empty file so delete it since we don't need it anymore.
                 File photoFile = new File(mTempPhotoFilePath);
@@ -588,10 +581,18 @@ public class OrderDetailActivity extends BaseActivity implements View.OnClickLis
             }
         } else if (requestCode == REQUEST_CODE_CHOOSE_PHOTO) {
             if (resultCode == RESULT_OK && data != null) {
-                String photoPath = getRealPathFromURI(this, data.getData());
-                Bitmap b= BitmapFactory.decodeFile(photoPath);
-                Bitmap out = getResizedBitmap(b, 1024); // TODO: b = null instead of a bitmap which may due to /storage/emulated/0/DCIM/Camera need root access
-                File file = new File(photoPath.substring(0,photoPath.lastIndexOf("/")), "Final_"+ photoPath.substring(photoPath.lastIndexOf("/")+1) );
+                String photoPath=data.getData().toString();
+                Bitmap b = null;
+                try {
+                    b = PhotoHelper.getBitmapFromPhotoPath(this, photoPath);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                Bitmap out = getResizedBitmap(b, 1024);
+//                photoPath = data.getData().getPath(); // Not good. Image filename is not in .jpeg.
+                photoPath = getRealPathFromURI(this, data.getData());
+                File storageDir = this.getExternalFilesDir(Environment.DIRECTORY_PICTURES); // Cannot write bitmap to /storage/emulated/0/DCIM/Camera which need root access.
+                File file = new File(storageDir, "Final_"+ photoPath.substring(photoPath.lastIndexOf("/")+1) );
                 FileOutputStream fOut;
                 try {
                     fOut = new FileOutputStream(file);
@@ -600,18 +601,16 @@ public class OrderDetailActivity extends BaseActivity implements View.OnClickLis
                     fOut.close();
                     b.recycle();
                     out.recycle();
-                } catch (Exception e) {}
+                } catch (Exception e) {
+                    Log.e(TAG, "Error", e);
+                }
                 // Original photo
-                //               mFileUri =Uri.fromFile(new File(photoPath)) ;
+//                               mFileUri =data.getData() ;
                 // Resized photo
                 mFileUri =Uri.fromFile(file);
                 if (mFileUri != null) {
                     uploadFromUri(mFileUri);
-                }
-                // Choose photo successful. Delete previously captured photo file if there's any.
-                PhotoHelper.deleteCapturedPhotoFile(mDriverPhotoImageView.getTag());
-//                mDriverPhotoImageView.setTag(photoPath);
-//                new LoadDriverPhotoAsync(this, mDriverPhotoImageView).execute(photoPath);
+                } else {Log.w(TAG, "File URI is null");}
             }
         }
     }
