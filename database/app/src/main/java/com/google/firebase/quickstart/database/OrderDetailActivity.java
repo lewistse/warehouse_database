@@ -83,13 +83,12 @@ public class OrderDetailActivity extends BaseActivity implements View.OnClickLis
     private EditText mDriverHkidField;
     private EditText mDriverCarPlateField;
     private EditText mCarrierCompanyNameField;
-    private TextView mDriverPhotoUrlField;
+    private TextView mDriverPhotoUrlView;
     private Button mConfirmButton;
 
     private static final int REQUEST_CODE_TAKE_PHOTO = 0;
     private static final int REQUEST_CODE_CHOOSE_PHOTO = 1;
     private static final String DRIVER_PHOTO_DIALOG_TAG = "DRIVER_PHOTO_DIALOG_TAG";
-    private static final int RC_TAKE_PICTURE = 101;
 
     private static final String KEY_FILE_URI = "key_file_uri";
     private static final String KEY_DOWNLOAD_URL = "key_download_url";
@@ -189,8 +188,10 @@ public class OrderDetailActivity extends BaseActivity implements View.OnClickLis
         mDriverCarPlateField = findViewById(R.id.car_plate_edit);
         mConfirmTimeStampView= findViewById(R.id.time_stamp_view);
         mCarrierCompanyNameField = findViewById(R.id.carrier_company_name_edit);
+        mDriverPhotoUrlView = findViewById(R.id.driver_photo_url_view);
 
         mConfirmButton = findViewById(R.id.confirm_button);
+
 
         mDriverPhotoImageView = (ImageView) findViewById(R.id.driver_photo_image_view);
 
@@ -238,8 +239,7 @@ public class OrderDetailActivity extends BaseActivity implements View.OnClickLis
                 mDriverCarPlateField.setText(orderDetail.carPlateNumber);
                 mConfirmTimeStampView.setText(orderDetail.confirmTimeStamp);
                 mCarrierCompanyNameField.setText(orderDetail.carrierCompanyName);
-
-//                mDriverPhotoUrlField.setText(orderDetail.driverPhotoUrl);
+                mDriverPhotoUrlView.setText(orderDetail.driverPhotoUrl);
                 if(orderDetail.driverPhotoUrl!=null)
                     mDriverPhotoImageView.setImageBitmap(getImageBitmap(orderDetail.driverPhotoUrl));
                 Log.d(TAG, "mOrderNumberView" );
@@ -249,7 +249,7 @@ public class OrderDetailActivity extends BaseActivity implements View.OnClickLis
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                // Getting Post failed, log a message
+                // Getting Post failed, log a messagedriverPhotoUrl = "https://firebasestorage.googleapis.com/v0/b/mywarehouseapp-ad6fb.appspot.com/o/photos%2FFinal_IMG_241117_170515_1273154999.jpg?alt=media&token=8e5362e5-a20d-4481-bb74-f22571bf17e0"
                 Log.w(TAG, "loadOrders:onCancelled", databaseError.toException());
                 // [START_EXCLUDE]
                 Toast.makeText(OrderDetailActivity.this, "Failed to load orders.",
@@ -449,9 +449,6 @@ public class OrderDetailActivity extends BaseActivity implements View.OnClickLis
                         // Get user information
                         User user = dataSnapshot.getValue(User.class);
                         String userName = user.username;
-                        String driverPhotoUrlText = null;
-                        if (mDownloadUrl!=null)
-                            driverPhotoUrlText = mDownloadUrl.toString();
 
                         //Lock current time
                         java.util.Calendar confirmtTime = java.util.Calendar.getInstance();
@@ -469,8 +466,11 @@ public class OrderDetailActivity extends BaseActivity implements View.OnClickLis
                         String driverHkidText = mDriverHkidField.getText().toString();
                         String carPlateNumberText = mDriverCarPlateField.getText().toString();
                         String carrierCompanyNameText = mCarrierCompanyNameField.getText().toString();
+                        String driverPhotoUrlText = mDriverPhotoUrlView.getText().toString();
+                        if (mDownloadUrl!=null)
+                            driverPhotoUrlText = mDownloadUrl.toString();
+
                         OrderDetail orderDetail = new OrderDetail(uid, userName, orderNumberText ,driverNameText, driverHkidText, carPlateNumberText,confirmTimeStamp, carrierCompanyNameText,driverPhotoUrlText);
-                        //String driverPhotoUrlText = mDriverPhotoUrlField.getText().toString();
 
                         Log.d(TAG,"uid: " +  uid);
                         Log.d(TAG,"userName: " +  userName);
