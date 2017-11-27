@@ -249,7 +249,7 @@ public class OrderDetailActivity extends BaseActivity implements View.OnClickLis
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                // Getting Post failed, log a messagedriverPhotoUrl = "https://firebasestorage.googleapis.com/v0/b/mywarehouseapp-ad6fb.appspot.com/o/photos%2FFinal_IMG_241117_170515_1273154999.jpg?alt=media&token=8e5362e5-a20d-4481-bb74-f22571bf17e0"
+                // Getting Post failed, log a message
                 Log.w(TAG, "loadOrders:onCancelled", databaseError.toException());
                 // [START_EXCLUDE]
                 Toast.makeText(OrderDetailActivity.this, "Failed to load orders.",
