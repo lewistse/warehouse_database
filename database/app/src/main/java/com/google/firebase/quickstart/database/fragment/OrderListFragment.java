@@ -3,12 +3,17 @@ package com.google.firebase.quickstart.database.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.SearchView;
+import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
@@ -33,12 +38,13 @@ public abstract class OrderListFragment extends Fragment {
     private static final String TAG = "OrderListFragment";
 
     // [START define_database_reference]
-    private DatabaseReference mDatabase; //ben
+    private DatabaseReference mDatabase;
     // [END define_database_reference]
 
-    private FirebaseRecyclerAdapter<NewOrder, OrderViewHolder> mAdapter;
+    private FirebaseRecyclerAdapter<NewOrder, OrderViewHolder> mAdapter, mSearchAdapter;
     private RecyclerView mRecycler;
     private LinearLayoutManager mManager;
+    private SearchView mSearchView;
 
     public OrderListFragment() {}
 
@@ -68,26 +74,141 @@ public abstract class OrderListFragment extends Fragment {
         mManager.setReverseLayout(true);
         mManager.setStackFromEnd(true);
         mRecycler.setLayoutManager(mManager);
-
-
+        mSearchView = getActivity().findViewById(R.id.search_bar);
 
         // Set up FirebaseRecyclerAdapter with the Query
         Query ordersQuery = getQuery(mDatabase);
 
-//        Query searchRef = getQuery(mDatabase).orderByChild("Orders").startAt(newText);
-//
-//        searchRef.addValueEventListener(new ValueEventListener()
+//        mDatabase.addValueEventListener(new ValueEventListener()
+////                mDatabase.addValueEventListener(new ValueEventListener()
 //        {
 //            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot)
-//            {
-//                for (DataSnapshot postSnapshot : dataSnapshot.getChildren())
-//                {
-//                    //TODO get the data here
+//            public void onDataChange(DataSnapshot dataSnapshot) {
 //
-//                }
-//
-//            }
+//                NewOrder newOrder = dataSnapshot.getValue(NewOrder.class);
+
+//                mOrderNumberView.setText(newOrder.orderNumber);
+//                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
+//                    System.out.println(snapshot.child("orders").getValue(String.class));
+
+        mSearchView.setOnSearchClickListener(new SearchView.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Log.d(TAG, " setOnSearchClickListener " );
+                mAdapter.stopListening();
+                Log.d(TAG, " mAdapter.stopListening() in search " );
+                mRecycler.invalidate();
+
+            }
+        });
+
+
+                mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+                        @Override
+                        public boolean onQueryTextSubmit(String query) {
+                            System.out.println("inside onQueryTextSubmit  " + query);
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onQueryTextChange(String newText) {
+
+//                            mAdapter.stopListening();
+//                            Log.d(TAG, " mAdapter.stopListening() in search " );
+//                            mAdapter.startListening();
+//                            Log.d(TAG, " mAdapter.startListening() in search " );
+//                            mAdapter.stopListening();
+//                            Log.d(TAG, " mAdapter.stopListening() in search " );
+
+                            System.out.println("inside onQueryTextChange  " + newText);
+
+//                            getActivity().getSupportFragmentManager().beginTransaction().detach();
+//                            getFragmentManager().beginTransaction().detach(new OrderFragment()).commitNowAllowingStateLoss();
+//                            getFragmentManager().beginTransaction().attach(new OrderFragment()).commitAllowingStateLoss();
+
+//                            OrderListFragment mFragment = getActivity().getSupportFragmentManager().findFragmentByTag("OrderListFragment"); //if you are using support library
+
+//                            OrderListFragment mFragment = (OrderListFragment) getFragmentManager().findFragmentByTag("OrderListFragment"); //if you are using support library
+//                            FragmentManager fm = getFragmentManager();
+//                            FragmentTransaction ft = fm.beginTransaction();
+//                            ft.detach(mFragment);
+//                            ft.attach(mFragment).commit();
+
+                            if (newText == null) {
+                                Log.d(TAG, "newText is null ");
+                           }
+
+                            else {
+                                //Query searchQuery = getQuery(mDatabase).orderByChild("Orders").startAt(newText).limitToFirst(10);
+                                Query searchQuery = mDatabase.child("orders").orderByChild("orderNumber").startAt(newText).endAt(newText + "\uf8ff").limitToFirst(10);
+//                            Query searchQuery = mDatabase.child("orders").orderByChild("orderNumber").startAt("3").endAt('3' + "\uf8ff").limitToFirst(10);
+
+                                FirebaseRecyclerOptions searchOptions = new FirebaseRecyclerOptions.Builder<NewOrder>()
+                                        .setQuery(searchQuery, NewOrder.class)
+                                        .build();
+
+                                Log.d(TAG, "FirebaseRecyclerOptions with search: ");
+
+                                mSearchAdapter = new FirebaseRecyclerAdapter<NewOrder, OrderViewHolder>(searchOptions) {
+
+                                    @Override
+                                    public OrderViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+                                        LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
+                                        Log.d(TAG, "LayoutInflater in search: ");
+                                        return new OrderViewHolder(inflater.inflate(R.layout.item_post, viewGroup, false));
+
+                                    }
+
+                                    @Override
+                                    protected void onBindViewHolder(OrderViewHolder viewHolder, int position, final NewOrder search) {
+                                        final DatabaseReference orderSearchRef = getRef(position);
+                                        Log.d(TAG, "onBindViewHolder  in search: ");
+
+                                        // Set click listener for the whole post view
+                                        final String orderSearchRefKey = orderSearchRef.getKey();
+                                        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                // Launch PostDetailActivity
+                                                Intent intent = new Intent(getActivity(), OrderDetailActivity.class);
+                                                intent.putExtra(OrderDetailActivity.EXTRA_ORDER_KEY, orderSearchRefKey);
+                                                startActivity(intent);
+                                            }
+                                        });
+
+                                        viewHolder.bindToOrder(search);
+                                        Log.d(TAG, "bindToOrder search  in search");
+
+                                    }
+
+                                };
+
+                                mSearchAdapter.startListening();
+                                Log.d(TAG, " mSearchAdapter.startListening()");
+
+                                mRecycler.setAdapter(mSearchAdapter);
+                                Log.d(TAG, " mRecycler.setAdapter in search");
+
+//                                mSearchAdapter.notifyDataSetChanged();
+//                                Log.d(TAG, " mSearchAdapter.notifyDataSetChanged()");
+
+                                mRecycler.invalidate();
+//                                Log.d(TAG, " mRecycler.invalidate in search");
+
+
+                            }   //else
+                            return true;
+
+
+                        }   // onQueryTextChange
+
+                    });
+//                }   // for (DataSnapshot Snapshot : dataSnapshot.getChildren())
+
+//           }
 //
 //            @Override
 //            public void onCancelled(DatabaseError databaseError){
@@ -104,7 +225,6 @@ public abstract class OrderListFragment extends Fragment {
 
         mAdapter = new FirebaseRecyclerAdapter<NewOrder, OrderViewHolder>(options) {
 
-            // how to retrieve data ?
             @Override
             public OrderViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
                 Log.d(TAG, "onCreateViewHolder: ");
@@ -147,7 +267,13 @@ public abstract class OrderListFragment extends Fragment {
         super.onStart();
         if (mAdapter != null) {
             mAdapter.startListening();
+            Log.d(TAG, " mAdapter.startListening() " );
+//            mSearchAdapter.startListening();
         }
+//        if (mSearchAdapter !=null){
+//            mSearchAdapter.startListening();
+//            Log.d(TAG, " mSearchAdapter.startListening() " );
+//        }
     }
 
     @Override
@@ -155,7 +281,13 @@ public abstract class OrderListFragment extends Fragment {
         super.onStop();
         if (mAdapter != null) {
             mAdapter.stopListening();
+//            mSearchAdapter.stopListening();
+            Log.d(TAG, " mAdapter.stopListening() " );
         }
+//        if (mSearchAdapter !=null){
+//            mSearchAdapter.stopListening();
+//            Log.d(TAG, " mSearchAdapter.stopListening() " );
+//        }
     }
 
 

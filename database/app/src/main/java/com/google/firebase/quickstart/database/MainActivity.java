@@ -83,25 +83,19 @@ public class  MainActivity extends BaseActivity {
         TabLayout tabLayout = findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
-        //search order number
-        searchView = (SearchView) findViewById(R.id.search_bar);
+//        getSupportFragmentManager().beginTransaction().detach(new OrderFragment()).commitNowAllowingStateLoss();
+//        getSupportFragmentManager().beginTransaction().attach(new OrderFragment()).commitAllowingStateLoss();
 
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                                              @Override
-                                              public boolean onQueryTextSubmit(String query) {
-                                                  return true;
-                                              }
+        // Button launches SearchActivity
+//        findViewById(R.id.search_bar).setOnClickListener(new View.OnClickListener() {
+//            //findViewById(R.id.fab_new_post).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                startActivity(new Intent(MainActivity.this, SearchActivity.class));
+//            }
+//        });
 
-                                              @Override
-                                              public boolean onQueryTextChange(String newText) {
-                                                  //adapter.swapCursor(dbHelper.readStock(searchView.getQuery().toString()));
-                                                  System.out.println("inside onQueryTextChange  " +newText);
-                                                  return true;
-                                              }
-                                          });
-
-        System.out.println("searchText: "+searchView.getQuery().toString());
-        //Log.d(TAG, "searchText" );
 
 
         // Button launches NewPostActivity

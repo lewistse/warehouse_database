@@ -16,6 +16,7 @@ public class OrderDetail {
     public String confirmTimeStamp;
     public String carrierCompanyName;
     public String driverPhotoUrl;
+    public String orderStatus;
 
 
     public OrderDetail() {
@@ -23,8 +24,8 @@ public class OrderDetail {
     }
 
     //public Comment(String uid, String author, String text) {
-    public OrderDetail(String uid, String userName, String orderNumber, String driverName, String driverHkid, String carPlateNumber, String confirmTimeStamp, String carrierCompanyName,String driverPhotoUrl) {
-            this.uid = uid;
+    public OrderDetail(String uid, String userName, String orderNumber, String driverName, String driverHkid, String carPlateNumber, String confirmTimeStamp, String carrierCompanyName,String driverPhotoUrl, String orderStatus) {
+        this.uid = uid;
         this.userName = userName;
         this.orderNumber = orderNumber;
         this.driverName = driverName;
@@ -33,6 +34,7 @@ public class OrderDetail {
         this.driverPhotoUrl = driverPhotoUrl;
         this.confirmTimeStamp = confirmTimeStamp;
         this.carrierCompanyName =carrierCompanyName;
+        this.orderStatus =orderStatus;
     }
 
 }

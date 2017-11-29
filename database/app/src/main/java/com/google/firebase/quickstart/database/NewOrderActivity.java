@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -40,12 +41,9 @@ public class NewOrderActivity extends BaseActivity {
     private DatabaseReference mDatabase;
     // [END declare_database_ref]
 
-    private EditText mTitleField;
     private EditText mNewOrderField;
-    private EditText mBodyField;
+    private TextView mOrderStatusField;
     private FloatingActionButton mSubmitButton;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +56,7 @@ public class NewOrderActivity extends BaseActivity {
 
         mNewOrderField = findViewById(R.id.new_order_title);
         mSubmitButton = findViewById(R.id.fab_new_order);
+        mOrderStatusField = findViewById(R.id.order_status_title);
 
         mSubmitButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,7 +73,7 @@ public class NewOrderActivity extends BaseActivity {
         final String driverHkid = "HKID number";
         final String carPlateNumber = "Car plate number";
 
-        final Boolean fulfilled = false;
+        final String orderStatus = "New";
 
 
         // Title is required
@@ -104,7 +103,7 @@ public class NewOrderActivity extends BaseActivity {
                                     "Error: could not fetch user.",
                                     Toast.LENGTH_SHORT).show();
                         } else {
-                            writeNewOrder(userId, user.username, orderNumber);
+                            writeNewOrder(userId, user.username, orderNumber, orderStatus);
                         }
 
                         // Finish this Activity, back to the stream
@@ -136,12 +135,12 @@ public class NewOrderActivity extends BaseActivity {
     }
 
     // [START write_fan_out]
-    private void writeNewOrder(String userId, String username, String orderNumber) {
+    private void writeNewOrder(String userId, String username, String orderNumber, String orderStatus) {
         // Create new post at /user-posts/$userid/$postid and at
         // /posts/$postid simultaneously
         String key = mDatabase.child("orders").push().getKey();
 
-        NewOrder order = new NewOrder(userId, username, orderNumber);   //updated ../models/Post.java
+        NewOrder order = new NewOrder(userId, username, orderNumber, orderStatus);   //updated ../models/Post.java
         Map<String, Object> postValues = order.toMap();
 
         Map<String, Object> childUpdates = new HashMap<>();

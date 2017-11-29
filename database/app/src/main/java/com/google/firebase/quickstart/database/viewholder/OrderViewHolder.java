@@ -14,10 +14,10 @@ public class OrderViewHolder extends RecyclerView.ViewHolder {
 
     public TextView orderNumberView;
     public TextView driverNameView;
-    //public ImageView driverPhotoView;
     public TextView driverHkidView;
     public TextView carPlateNumberView;
     public TextView userNameView;
+    public TextView orderStatusView;
 
     public OrderViewHolder(View itemView) {
         super(itemView);
@@ -27,6 +27,7 @@ public class OrderViewHolder extends RecyclerView.ViewHolder {
         driverNameView = itemView.findViewById(R.id.driver_name_title);
         driverHkidView = itemView.findViewById(R.id.driver_hkid_title);
         carPlateNumberView = itemView.findViewById(R.id.car_plate_title);
+        orderStatusView = itemView.findViewById(R.id.order_status_title);
 
         // driverPhotoView = itemView.findViewById(R.id.driver_photo_image_view);
 
@@ -36,6 +37,7 @@ public class OrderViewHolder extends RecyclerView.ViewHolder {
 
         orderNumberView.setText(newOrder.orderNumber);
         userNameView.setText(newOrder.userName);
+        orderStatusView.setText(newOrder.orderStatus);
 
     }
 }

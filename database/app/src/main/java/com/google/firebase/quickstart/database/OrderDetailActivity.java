@@ -82,7 +82,7 @@ public class OrderDetailActivity extends BaseActivity implements View.OnClickLis
     private EditText mDriverHkidField;
     private EditText mDriverCarPlateField;
     private EditText mCarrierCompanyNameField;
-    private TextView mDriverPhotoUrlField;
+    private TextView mOrderStatusField;
     private Button mConfirmButton;
 
     private static final int REQUEST_CODE_TAKE_PHOTO = 0;
@@ -188,7 +188,7 @@ public class OrderDetailActivity extends BaseActivity implements View.OnClickLis
         mDriverCarPlateField = findViewById(R.id.car_plate_edit);
         mConfirmTimeStampView= findViewById(R.id.time_stamp_view);
         mCarrierCompanyNameField = findViewById(R.id.carrier_company_name_edit);
-
+        mOrderStatusField = findViewById(R.id.order_status_title);
         mConfirmButton = findViewById(R.id.confirm_button);
 
         mDriverPhotoImageView = (ImageView) findViewById(R.id.driver_photo_image_view);
@@ -237,6 +237,7 @@ public class OrderDetailActivity extends BaseActivity implements View.OnClickLis
                 mDriverCarPlateField.setText(orderDetail.carPlateNumber);
                 mConfirmTimeStampView.setText(orderDetail.confirmTimeStamp);
                 mCarrierCompanyNameField.setText(orderDetail.carrierCompanyName);
+//                mOrderStatusField.setText(orderDetail.orderStatus);
 
 //                mDriverPhotoUrlField.setText(orderDetail.driverPhotoUrl);
                 if(orderDetail.driverPhotoUrl!=null)
@@ -466,7 +467,10 @@ public class OrderDetailActivity extends BaseActivity implements View.OnClickLis
                         String driverHkidText = mDriverHkidField.getText().toString();
                         String carPlateNumberText = mDriverCarPlateField.getText().toString();
                         String carrierCompanyNameText = mCarrierCompanyNameField.getText().toString();
-                        OrderDetail orderDetail = new OrderDetail(uid, userName, orderNumberText ,driverNameText, driverHkidText, carPlateNumberText,confirmTimeStamp, carrierCompanyNameText,driverPhotoUrlText);
+//                        String orderStatusText = mOrderStatusField.getText().toString();
+                        String orderStatusText = "Fulfilled";
+
+                        OrderDetail orderDetail = new OrderDetail(uid, userName, orderNumberText ,driverNameText, driverHkidText, carPlateNumberText,confirmTimeStamp, carrierCompanyNameText,driverPhotoUrlText, orderStatusText);
                         //String driverPhotoUrlText = mDriverPhotoUrlField.getText().toString();
 
                         Log.d(TAG,"uid: " +  uid);
@@ -478,6 +482,7 @@ public class OrderDetailActivity extends BaseActivity implements View.OnClickLis
                         Log.d(TAG,"confirmTimeStamp: " +  confirmTimeStamp);
                         Log.d(TAG,"carrierCompanyName: " +  carrierCompanyNameText);
                         Log.d(TAG,"driverPhotoUrlText: " +  driverPhotoUrlText);
+                        Log.d(TAG,"orderStatusText: " +  orderStatusText);
 
                         // Push the ordes, it will appear in the list
                         //mOrderDetailsReference.push().setValue(orderDetail);
