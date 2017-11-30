@@ -5,14 +5,14 @@ import com.google.firebase.database.Query;
 
 
 // To be updated
-public class ImportFragment extends OrderListFragment {
+public class ImportFragment extends OtherFragment {
 
     public ImportFragment() {}
 
-    @Override
-    public Query getQuery(DatabaseReference databaseReference) {
-        // All my posts
-        //return databaseReference.child("user-posts")
-        return databaseReference.child("orders").child(getUid());
-    }
+//    @Override
+//    public Query getQuery(DatabaseReference databaseReference) {
+//        // All my posts
+//        //return databaseReference.child("user-posts")
+//        return databaseReference.child("orders").child(getUid());
+//    }
 }

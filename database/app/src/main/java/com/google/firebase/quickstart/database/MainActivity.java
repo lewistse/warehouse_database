@@ -36,6 +36,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.quickstart.database.fragment.ImportFragment;
 import com.google.firebase.quickstart.database.fragment.ExportFragment;
 import com.google.firebase.quickstart.database.fragment.OrderFragment;
+import com.google.firebase.quickstart.database.fragment.OtherFragment;
+
 
 public class  MainActivity extends BaseActivity {
 
@@ -43,7 +45,7 @@ public class  MainActivity extends BaseActivity {
 
     private FragmentPagerAdapter mPagerAdapter;
     private ViewPager mViewPager;
-    SearchView searchView;
+    private SearchView mSearchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +85,8 @@ public class  MainActivity extends BaseActivity {
         TabLayout tabLayout = findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
+        mSearchView = findViewById(R.id.search_bar);
+
 //        getSupportFragmentManager().beginTransaction().detach(new OrderFragment()).commitNowAllowingStateLoss();
 //        getSupportFragmentManager().beginTransaction().attach(new OrderFragment()).commitAllowingStateLoss();
 
@@ -97,6 +101,14 @@ public class  MainActivity extends BaseActivity {
 //        });
 
 
+//        mSearchView.setOnSearchClickListener(new SearchView.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//                startActivity(new Intent(MainActivity.this, SearchActivity.class));
+//
+//            }
+//        });
 
         // Button launches NewPostActivity
         findViewById(R.id.fab_new_order).setOnClickListener(new View.OnClickListener() {

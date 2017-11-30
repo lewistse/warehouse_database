@@ -3,29 +3,20 @@ package com.google.firebase.quickstart.database.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.SearchView;
-import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Query;
-import com.google.firebase.database.Transaction;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.quickstart.database.MainActivity;
 import com.google.firebase.quickstart.database.OrderDetailActivity;
 import com.google.firebase.quickstart.database.R;
@@ -52,7 +43,7 @@ public abstract class OrderListFragment extends Fragment {
     public View onCreateView (LayoutInflater inflater, ViewGroup container,
                               Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View rootView = inflater.inflate(R.layout.fragment_all_posts, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_all_orders, container, false);
 
         // [START create_database_reference]
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -79,28 +70,22 @@ public abstract class OrderListFragment extends Fragment {
         // Set up FirebaseRecyclerAdapter with the Query
         Query ordersQuery = getQuery(mDatabase);
 
-//        mDatabase.addValueEventListener(new ValueEventListener()
-////                mDatabase.addValueEventListener(new ValueEventListener()
-//        {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//
-//                NewOrder newOrder = dataSnapshot.getValue(NewOrder.class);
-
-//                mOrderNumberView.setText(newOrder.orderNumber);
-//                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-
-//                    System.out.println(snapshot.child("orders").getValue(String.class));
-
-        mSearchView.setOnSearchClickListener(new SearchView.OnClickListener() {
+        mSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
-            public void onClick(View view) {
+            public boolean onClose() {
 
-                Log.d(TAG, " setOnSearchClickListener " );
-                mAdapter.stopListening();
-                Log.d(TAG, " mAdapter.stopListening() in search " );
-                mRecycler.invalidate();
+                Log.d(TAG, " setOnCloseListener " );
 
+                        if (mSearchAdapter !=null) {
+                            mSearchAdapter.stopListening();
+                            Log.d(TAG, " mSearchAdapter.stopListening() ");
+                            mRecycler.invalidate();
+                        }
+
+                Log.d(TAG, " recreate activity() ");
+                getActivity().recreate();
+
+                return false;
             }
         });
 
@@ -116,14 +101,7 @@ public abstract class OrderListFragment extends Fragment {
                         @Override
                         public boolean onQueryTextChange(String newText) {
 
-//                            mAdapter.stopListening();
-//                            Log.d(TAG, " mAdapter.stopListening() in search " );
-//                            mAdapter.startListening();
-//                            Log.d(TAG, " mAdapter.startListening() in search " );
-//                            mAdapter.stopListening();
-//                            Log.d(TAG, " mAdapter.stopListening() in search " );
-
-                            System.out.println("inside onQueryTextChange  " + newText);
+                            Log.d(TAG, "inside onQueryTextChange  " + newText );
 
 //                            getActivity().getSupportFragmentManager().beginTransaction().detach();
 //                            getFragmentManager().beginTransaction().detach(new OrderFragment()).commitNowAllowingStateLoss();
@@ -137,14 +115,13 @@ public abstract class OrderListFragment extends Fragment {
 //                            ft.detach(mFragment);
 //                            ft.attach(mFragment).commit();
 
-                            if (newText == null) {
+                            if (newText == "") {
                                 Log.d(TAG, "newText is null ");
                            }
 
                             else {
                                 //Query searchQuery = getQuery(mDatabase).orderByChild("Orders").startAt(newText).limitToFirst(10);
                                 Query searchQuery = mDatabase.child("orders").orderByChild("orderNumber").startAt(newText).endAt(newText + "\uf8ff").limitToFirst(10);
-//                            Query searchQuery = mDatabase.child("orders").orderByChild("orderNumber").startAt("3").endAt('3' + "\uf8ff").limitToFirst(10);
 
                                 FirebaseRecyclerOptions searchOptions = new FirebaseRecyclerOptions.Builder<NewOrder>()
                                         .setQuery(searchQuery, NewOrder.class)
@@ -158,7 +135,7 @@ public abstract class OrderListFragment extends Fragment {
                                     public OrderViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
                                         LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
                                         Log.d(TAG, "LayoutInflater in search: ");
-                                        return new OrderViewHolder(inflater.inflate(R.layout.item_post, viewGroup, false));
+                                        return new OrderViewHolder(inflater.inflate(R.layout.order_list, viewGroup, false));
 
                                     }
 
@@ -192,11 +169,8 @@ public abstract class OrderListFragment extends Fragment {
                                 mRecycler.setAdapter(mSearchAdapter);
                                 Log.d(TAG, " mRecycler.setAdapter in search");
 
-//                                mSearchAdapter.notifyDataSetChanged();
-//                                Log.d(TAG, " mSearchAdapter.notifyDataSetChanged()");
-
                                 mRecycler.invalidate();
-//                                Log.d(TAG, " mRecycler.invalidate in search");
+                                Log.d(TAG, " mRecycler.invalidate in search");
 
 
                             }   //else
@@ -206,15 +180,6 @@ public abstract class OrderListFragment extends Fragment {
                         }   // onQueryTextChange
 
                     });
-//                }   // for (DataSnapshot Snapshot : dataSnapshot.getChildren())
-
-//           }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError){
-//                Log.w(TAG, "searchOrders:onCancelled", databaseError.toException());
-//            }
-//        });
 
 
         FirebaseRecyclerOptions options = new FirebaseRecyclerOptions.Builder<NewOrder>()
@@ -231,7 +196,7 @@ public abstract class OrderListFragment extends Fragment {
 
                 LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
                 Log.d(TAG, "LayoutInflater: " );
-                return new OrderViewHolder(inflater.inflate(R.layout.item_post, viewGroup, false));
+                return new OrderViewHolder(inflater.inflate(R.layout.order_list, viewGroup, false));
 
             }
 
