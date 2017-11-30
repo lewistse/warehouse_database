@@ -2,6 +2,7 @@ package com.google.firebase.quickstart.database;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
@@ -15,9 +16,16 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.quickstart.database.models.User;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class SignInActivity extends BaseActivity implements View.OnClickListener {
 
@@ -119,7 +127,7 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
 
         // Write new user
         writeNewUser(user.getUid(), username, user.getEmail());
-
+        System.out.println(FirebaseInstanceId.getInstance().getToken().toString());
         // Go to MainActivity
         startActivity(new Intent(SignInActivity.this, MainActivity.class));
         finish();
@@ -153,10 +161,63 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
     }
 
     // [START basic_write]
-    private void writeNewUser(String userId, String name, String email) {
-        User user = new User(name, email);
+    private void writeNewUser(final String userId, final String name, final String email) {
 
-        mDatabase.child("users").child(userId).setValue(user);
+
+        // Lu read database, check userid if exist and retrieve all existing tokens
+        // [START single_value_read]
+        //final String userId = getUid();
+        mDatabase.child("users").child(userId).addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                        Map <String, String > token = new HashMap<String, String>();
+                        // Get user value
+                        User user = dataSnapshot.getValue(User.class);
+
+                        // [START_EXCLUDE]
+                        if (user == null) {
+                            // User is null, error out
+                            Log.e(TAG, "User " + userId + " is unexpectedly null");
+
+                            user = new User(name, email, token);
+                            mDatabase.child("users").child(userId).setValue(user);
+
+                            /*Toast.makeText(NewOrderActivity.this,
+                                    "Error: could not fetch user.",
+                                    Toast.LENGTH_SHORT).show();*/
+                        } else {
+
+                            token = user.notificationTokens;
+                            token.put("11112222", "false");
+                            token.put("22223333", "false");
+
+                            user = new User(name, email, token);
+
+                            mDatabase.child("users").child(userId).setValue(user);
+                            //writeNewOrder(userId, user.username, orderNumber);
+
+                        }
+
+                        // Finish this Activity, back to the stream
+                        //setEditingEnabled(true);
+                        finish();
+                        // [END_EXCLUDE]
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.w(TAG, "getUser:onCancelled", databaseError.toException());
+                        // [START_EXCLUDE]
+                        //setEditingEnabled(true);
+                        // [END_EXCLUDE]
+                    }
+                });
+        // [END single_value_read]
+
+        finish();
+        //System.out.println(mDatabase.child("users").child(userId).child("notificationTokens").());
     }
     // [END basic_write]
 

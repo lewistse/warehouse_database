@@ -3,6 +3,6 @@
 
     <external-path
         name="my_images"
-        path="Android/data/com.google.firebase.mywarehouseapp.database/files/Pictures"/>
+        path="Android/data/com.google.firebase.quickstart.database/files/Pictures" />
 
 </paths>

@@ -33,6 +33,8 @@ import android.widget.SearchView;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.quickstart.database.fragment.ImportFragment;
 import com.google.firebase.quickstart.database.fragment.ExportFragment;
 import com.google.firebase.quickstart.database.fragment.OrderFragment;
@@ -125,6 +127,11 @@ public class  MainActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int i = item.getItemId();
         if (i == R.id.action_logout) {
+
+            //remove notification token tied to this sign in
+            FirebaseDatabase.getInstance().getReference().child("users").child(getUid())
+                    .child("notificationTokens").child(FirebaseInstanceId.getInstance().getToken().toString()).removeValue();
+
             FirebaseAuth.getInstance().signOut();
             startActivity(new Intent(this, SignInActivity.class));
             finish();
