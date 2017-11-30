@@ -23,10 +23,24 @@
         style="@style/hexa_solutions_limited"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingBottom="40dp"
-        android:paddingTop="40dp"
         android:layout_centerHorizontal="true"
-        android:text="Hexa Solutions" />
+        android:paddingBottom="40dp"
+        android:paddingTop="30dp"
+        android:text="HEXA SOLUTIONS"
+        android:textColor="@android:color/holo_blue_dark"
+        android:textSize="36sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:paddingBottom="10dp"
+        android:paddingTop="88dp"
+        android:text="Copyright © 2017 Hexa Solutions Limited"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="16sp" />
+
 
     <LinearLayout
         android:id="@+id/layout_email_password"
